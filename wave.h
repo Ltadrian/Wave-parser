@@ -1,9 +1,9 @@
 // WAVE file header format
 
-struct HEADER {
-	unsigned char chunk_ID[4];                  // RIFF string
+struct HEADER{
+    char chunk_ID[4];                  // RIFF string
     
-    unsigned int chunk_size;                    // overall size of 
+    unsigned int chunk_size;                    // overall size of
 
     unsigned char format[4];                    // WAVE string
 
