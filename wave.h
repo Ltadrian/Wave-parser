@@ -29,7 +29,7 @@ struct HEADER{
 
     char data_chunk_header [4];                 // DATA string or FLLR string
 
-    unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
+    unsigned long int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
 
 };
 

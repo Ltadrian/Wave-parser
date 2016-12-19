@@ -22,15 +22,17 @@ int main(int argc, char* argv[]){
 	    cout << "Reading " << filename << " file... " << endl;
 	    // read header data
 
-		char* buffer4 = new char[4]; //4 byte buffer
-        char* buffer2 = new char[2]; //2 byte buffer
+		unsigned char buffer4[4]; //4 byte buffer
+        unsigned char buffer2[2]; //2 byte buffer
 
+        cout << "Size of arrays" << sizeof(buffer4) << "\n";
+        cout << "Size of arrays" << sizeof(buffer2) << "\n";
 
-	    fs.read(buffer4, sizeof(header.chunk_ID) );
-		strcpy(header.chunk_ID, buffer4);
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.chunk_ID) );
+		strcpy( header.chunk_ID, (char *) (buffer4));
 		cout << "(1-4) Chunk Descriptor: " << header.chunk_ID << endl;
 
-	    fs.read(buffer4, sizeof(header.chunk_size));
+	    fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.chunk_size));
         header.chunk_size = (buffer4[0]<<0) |
                 (buffer4[1]<<8) |
                 (buffer4[2]<<16) |
@@ -41,16 +43,16 @@ int main(int argc, char* argv[]){
         cout << "Total MB: " << mb << " MB" << endl;
 
 
-        fs.read(buffer4, sizeof(header.format) );
-        strcpy(header.format, buffer4);
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.format) );
+        strcpy(header.format, (char*) buffer4);
         cout << "(9-12) File type: " << header.format << endl;
 
-        fs.read(buffer4, sizeof(header.fmt_chunk_marker) );
-        strcpy(header.fmt_chunk_marker, buffer4);
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.fmt_chunk_marker) );
+        strcpy(header.fmt_chunk_marker, (char*) buffer4);
         cout << "(13-16) File type: " << header.fmt_chunk_marker << endl;
 
 
-        fs.read(buffer4, sizeof(header.length_of_fmt));
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.length_of_fmt));
         header.length_of_fmt = (buffer4[0]<<0) |
                                (buffer4[1]<<8) |
                                (buffer4[2]<<16) |
@@ -58,7 +60,7 @@ int main(int argc, char* argv[]){
 
         cout << "(17-20) Length of fmt header(subchunk): " << header.length_of_fmt << endl;
 
-        fs.read(buffer2, (sizeof(buffer2)/4) ); //2 bytes
+        fs.read(reinterpret_cast<char*>(buffer2), sizeof(buffer2) ); //2 bytes
         header.format_type = (buffer2[0]<<0) | (buffer2[1]<<8);
 
         char format_name[3] = "";
@@ -71,7 +73,7 @@ int main(int argc, char* argv[]){
         cout << "(21-22) Audio Format: " << format_name << endl;
 
 
-        fs.read(buffer2, (sizeof(buffer2)/4) );
+        fs.read(reinterpret_cast<char*>(buffer2), sizeof(buffer2) );
         header.channels = (buffer2[0]<<0) | (buffer2[1]<<8);
         char num_channels[6] = "";
         if(header.channels == 2)
@@ -81,9 +83,8 @@ int main(int argc, char* argv[]){
 
         cout << "(23-24) Number of channels: " << num_channels <<endl;
 
-        fs.read(buffer4, sizeof(header.sample_rate));
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.sample_rate));
 
-        cout << "Size of int " << sizeof(header.sample_rate) << endl;
         header.sample_rate =   (buffer4[0]<<0) |
                                (buffer4[1]<<8) |
                                (buffer4[2]<<16) |
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]){
         cout << "(25-28) Sample rate: " << header.sample_rate << endl;
 
 
-        fs.read(buffer4, sizeof(header.byte_rate));
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.byte_rate));
 
         header.byte_rate =   (buffer4[0]<<0) |
                                (buffer4[1]<<8) |
@@ -101,7 +102,7 @@ int main(int argc, char* argv[]){
 
         cout << "(29-32) Byte rate: " << header.byte_rate << endl;
 
-        fs.read(buffer2, (2) );
+        fs.read(reinterpret_cast<char*>(buffer2), sizeof(buffer2) );
 
         header.block_align =   (buffer2[0]<<0) |
                                (buffer2[1]<<8);
@@ -109,23 +110,23 @@ int main(int argc, char* argv[]){
         cout << "(33-34) Block Align: " << header.block_align << endl;
 
 
-        fs.read(buffer2, (2) );
+        fs.read(reinterpret_cast<char*>(buffer2), sizeof(buffer2) );
 
         header.bits_per_sample =   (buffer2[0]<<0) |
-                               (buffer2[1]<<8);
+                                   (buffer2[1]<<8);
 
         cout << "(35-36) Bits per sample: " << header.bits_per_sample << endl;
 
-        fs.read(buffer4, sizeof(header.data_chunk_header) );
-        strcpy(header.data_chunk_header, buffer4);
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.data_chunk_header) );
+        strcpy(header.data_chunk_header, (char*) buffer4);
         cout << "(37-40) Chunk Descriptor: " << header.data_chunk_header << endl;
 
-        fs.read(buffer4, sizeof(header.data_size));
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.data_size));
 
-        header.data_size =   (buffer4[0]<<0) |
-                               (buffer4[1]<<8) |
-                               (buffer4[2]<<16) |
-                               (buffer4[3]<<24) ;
+        header.data_size =  (buffer4[0]<<0) |
+                            (buffer4[1]<<8) |
+                            (buffer4[2]<<16) |
+                            (buffer4[3]<<24) ;
 
         cout << "(41-44) File size: " << header.data_size << endl;
         mb = header.data_size/1048576.0;
@@ -138,8 +139,7 @@ int main(int argc, char* argv[]){
 	    fs.close();
 
 
-	    delete[] buffer4;
-        delete[] buffer2;
+
 	  }
 	else{
 		cout << "Error opening file" << endl;
