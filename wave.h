@@ -1,13 +1,17 @@
-// WAVE file header format
+/*
+ * WAVE file header format
+ * unsigned_int for little endian conversions
+*/
 
 struct HEADER{
-    char chunk_ID[4];                  // RIFF string
+
+    char chunk_ID[4];                           // RIFF string
     
     unsigned int chunk_size;                    // overall size of
 
-    unsigned char format[4];                    // WAVE string
+    char format[4];                             // WAVE string
 
-    unsigned char fmt_chunk_marker[4];          // fmt string with trailing null char
+    char fmt_chunk_marker[4];                   // fmt string with trailing null char
 
     unsigned int length_of_fmt;                 // length of the format data
 
@@ -23,7 +27,7 @@ struct HEADER{
 
     unsigned int bits_per_sample;               // bits per sample, 8- 8bits, 16- 16 bits etc
 
-    unsigned char data_chunk_header [4];        // DATA string or FLLR string
+    char data_chunk_header [4];                 // DATA string or FLLR string
 
     unsigned int data_size;                     // NumSamples * NumChannels * BitsPerSample/8 - size of the next chunk that will be read
 
