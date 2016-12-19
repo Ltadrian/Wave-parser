@@ -21,7 +21,7 @@ struct HEADER{
 
     unsigned int sample_rate;                   // sampling rate (blocks per second)
 
-    unsigned int byterate;                      // SampleRate * NumChannels * BitsPerSample/8
+    unsigned int byte_rate;                      // SampleRate * NumChannels * BitsPerSample/8
 
     unsigned int block_align;                   // NumChannels * BitsPerSample/8
 

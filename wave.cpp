@@ -81,8 +81,10 @@ int main(int argc, char* argv[]){
 
         cout << "(23-24) Number of channels: " << num_channels <<endl;
 
-        fs.read(buffer4, sizeof(header.sample_rate)/2);
-        header.sample_rate = (buffer4[0]<<0) |
+        fs.read(buffer4, sizeof(header.sample_rate));
+
+        cout << "Size of int " << sizeof(header.sample_rate) << endl;
+        header.sample_rate =   (buffer4[0]<<0) |
                                (buffer4[1]<<8) |
                                (buffer4[2]<<16) |
                                (buffer4[3]<<24) ;
@@ -90,17 +92,50 @@ int main(int argc, char* argv[]){
         cout << "(25-28) Sample rate: " << header.sample_rate << endl;
 
 
+        fs.read(buffer4, sizeof(header.byte_rate));
 
+        header.byte_rate =   (buffer4[0]<<0) |
+                               (buffer4[1]<<8) |
+                               (buffer4[2]<<16) |
+                               (buffer4[3]<<24) ;
+
+        cout << "(29-32) Byte rate: " << header.byte_rate << endl;
+
+        fs.read(buffer2, (2) );
+
+        header.block_align =   (buffer2[0]<<0) |
+                               (buffer2[1]<<8);
+
+        cout << "(33-34) Block Align: " << header.block_align << endl;
+
+
+        fs.read(buffer2, (2) );
+
+        header.bits_per_sample =   (buffer2[0]<<0) |
+                               (buffer2[1]<<8);
+
+        cout << "(35-36) Bits per sample: " << header.bits_per_sample << endl;
+
+        fs.read(buffer4, sizeof(header.data_chunk_header) );
+        strcpy(header.data_chunk_header, buffer4);
+        cout << "(37-40) Chunk Descriptor: " << header.data_chunk_header << endl;
+
+        fs.read(buffer4, sizeof(header.data_size));
+
+        header.data_size =   (buffer4[0]<<0) |
+                               (buffer4[1]<<8) |
+                               (buffer4[2]<<16) |
+                               (buffer4[3]<<24) ;
+
+        cout << "(41-44) File size: " << header.data_size << endl;
+        mb = header.data_size/1048576.0;
+        cout << "Total MB: " << mb << " MB" << endl;
 
         if (fs)
 	      cout << "file read successfully." << endl;
 	    else
 	      std::cout << "error: only " << fs.gcount() << " could be read";
 	    fs.close();
-
-	    // ...buffer contains the entire file...
-
-
 
 
 	    delete[] buffer4;
