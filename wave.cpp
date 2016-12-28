@@ -9,34 +9,40 @@
 
 using namespace std;
 
+Wave::Wave(const std::string &filename) {
+    m_filename = filename;
+    load(m_filename);
+}
 
-struct HEADER header;
 
-int main(int argc, char* argv[]){
-	string filename = argv[1];
-	fstream fs;
+Wave::~Wave(){
+}
 
-	fs.open("bass.wav", fstream::in);
-	if (fs.is_open()) {
 
-	    cout << "Reading " << filename << " file... " << endl;
-	    // read header data
+void Wave::load(const std::string &filename) {
 
-		unsigned char buffer4[4]; //4 byte buffer
+    fstream fs;
+    fs.open(filename, fstream::in);
+    if (fs.is_open()) {
+
+        cout << "Reading " << filename << " file... " << endl;
+        // read header data
+
+        unsigned char buffer4[4]; //4 byte buffer
         unsigned char buffer2[2]; //2 byte buffer
 
         cout << "Size of arrays" << sizeof(buffer4) << "\n";
         cout << "Size of arrays" << sizeof(buffer2) << "\n";
 
         fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.chunk_ID) );
-		strcpy( header.chunk_ID, (char *) (buffer4));
-		cout << "(1-4) Chunk Descriptor: " << header.chunk_ID << endl;
+        strcpy( header.chunk_ID, (char *) (buffer4));
+        cout << "(1-4) Chunk Descriptor: " << header.chunk_ID << endl;
 
-	    fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.chunk_size));
+        fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.chunk_size));
         header.chunk_size = (buffer4[0]<<0) |
-                (buffer4[1]<<8) |
-                (buffer4[2]<<16) |
-                (buffer4[3]<<24); //convert little endian to big endian
+                            (buffer4[1]<<8) |
+                            (buffer4[2]<<16) |
+                            (buffer4[3]<<24); //convert little endian to big endian
 
         cout << "(5-8) Total size in bytes: " << header.chunk_size <<endl;
         double mb = header.chunk_size/1048576.0;
@@ -96,9 +102,9 @@ int main(int argc, char* argv[]){
         fs.read(reinterpret_cast<char*>(buffer4), sizeof(header.byte_rate));
 
         header.byte_rate =   (buffer4[0]<<0) |
-                               (buffer4[1]<<8) |
-                               (buffer4[2]<<16) |
-                               (buffer4[3]<<24) ;
+                             (buffer4[1]<<8) |
+                             (buffer4[2]<<16) |
+                             (buffer4[3]<<24) ;
 
         cout << "(29-32) Byte rate: " << header.byte_rate << endl;
 
@@ -133,20 +139,22 @@ int main(int argc, char* argv[]){
         cout << "Total MB: " << mb << " MB" << endl;
 
         if (fs)
-	      cout << "file read successfully." << endl;
-	    else
-	      std::cout << "error: only " << fs.gcount() << " could be read";
-	    fs.close();
+            cout << "file read successfully." << endl;
+        else
+            std::cout << "error: only " << fs.gcount() << " could be read";
+        fs.close();
 
 
 
-	  }
-	else{
-		cout << "Error opening file" << endl;
-	}
-  
+    }
+    else{
+        cout << "Error opening file" << endl;
+    }
 
-	fs.close();
 
-	return 0;
+    fs.close();
+
 }
+
+
+
